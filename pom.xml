@@ -5,7 +5,7 @@
 
   <groupId>net.pwall.json</groupId>
   <artifactId>json-co-stream</artifactId>
-  <version>0.1-SNAPSHOT</version>
+  <version>0.1</version>
   <name>Kotlin coroutine JSON Streams</name>
   <description>Kotlin coroutine version of json-stream</description>
   <packaging>jar</packaging>
@@ -72,7 +72,7 @@
     <dependency>
       <groupId>net.pwall.util</groupId>
       <artifactId>co-pipelines</artifactId>
-      <version>0.1</version>
+      <version>0.2</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>

@@ -1,12 +1,12 @@
 package net.pwall.json.stream
 
 import net.pwall.json.JSONValue
-import net.pwall.util.pipeline.CoAbstractIntAcceptor
+import net.pwall.util.pipeline.AbstractIntCoAcceptor
 
-class JSONCoStream : CoAbstractIntAcceptor<JSONValue?>() {
+class JSONCoStream : AbstractIntCoAcceptor<JSONValue?>() {
 
-    val delegate = JSONCoValueBuilder()
-    var started = false
+    private val delegate = JSONCoValueBuilder()
+    private var started = false
 
     override val result: JSONValue?
         get() = delegate.result

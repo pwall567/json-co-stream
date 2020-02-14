@@ -2,12 +2,12 @@ package net.pwall.json.stream.test
 
 import kotlin.test.Test
 import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
 
 import kotlinx.coroutines.runBlocking
 
 import net.pwall.json.JSONException
 import net.pwall.json.stream.JSONCoStream
-import kotlin.test.assertFailsWith
 
 class JSONCoStreamErrorTest {
 

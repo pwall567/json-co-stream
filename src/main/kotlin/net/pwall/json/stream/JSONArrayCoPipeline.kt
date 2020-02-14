@@ -2,11 +2,11 @@ package net.pwall.json.stream
 
 import net.pwall.json.JSONException
 import net.pwall.json.JSONValue
-import net.pwall.util.pipeline.CoAbstractIntObjectPipeline
+import net.pwall.util.pipeline.AbstractIntObjectCoPipeline
 import net.pwall.util.pipeline.CoAcceptor
 
-class JSONCoArrayPipeline<R>(valueConsumer: CoAcceptor<JSONValue, R>) :
-        CoAbstractIntObjectPipeline<JSONValue, R>(valueConsumer) {
+class JSONArrayCoPipeline<R>(valueConsumer: CoAcceptor<JSONValue?, R>) :
+        AbstractIntObjectCoPipeline<JSONValue?, R>(valueConsumer) {
 
     enum class State { INITIAL, FIRST, ENTRY, COMMA, COMPLETE }
 
@@ -38,9 +38,37 @@ class JSONCoArrayPipeline<R>(valueConsumer: CoAcceptor<JSONValue, R>) :
                 }
             }
             State.ENTRY -> {
+                val consumed = child.acceptChar(value)
+                if (child.complete) {
+                    emit(child.result)
+                    state = State.COMMA
+                }
+                if (!consumed) {
+                    state = State.COMMA
+                    expectComma(value)
+                }
+            }
+            State.COMMA -> expectComma(value)
+            State.COMPLETE -> JSONCoBuilder.checkWhitespace(value)
+        }
+    }
 
+    private fun expectComma(ch: Int) {
+        if (!JSONCoBuilder.isWhitespace(ch)) {
+            state = when (ch.toChar()) {
+                ',' -> {
+                    child = JSONCoValueBuilder()
+                    State.ENTRY
+                }
+                ']' -> State.COMPLETE
+                else -> throw JSONException("Illegal syntax in JSON array")
             }
         }
+    }
+
+    override fun close() {
+        if (!complete)
+            throw JSONException("Unexpected end of data in JSON array")
     }
 
 }
