@@ -2,7 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
-## [0.2] - 2020-04-05
+## [0.2] - 2020-04-06
+### Added
+- `JSONDeserializerCoPipeline`: deserialize 
+
 ### Changed
 - `JSONCoStringBuilder`: Switched to use named constants
 - All files: added block comments

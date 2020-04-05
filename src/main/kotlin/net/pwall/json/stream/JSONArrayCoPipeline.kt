@@ -30,6 +30,14 @@ import net.pwall.json.JSONValue
 import net.pwall.util.pipeline.AbstractIntObjectCoPipeline
 import net.pwall.util.pipeline.CoAcceptor
 
+/**
+ * A (coroutine) pipeline that accepts Unicode code points and emits `JSONValue`s.
+ *
+ * @constructor
+ * @param   valueConsumer   the `JSONValue` consumer
+ * @param   R               the pipeline result type
+ * @author  Peter Wall
+ */
 class JSONArrayCoPipeline<R>(valueConsumer: CoAcceptor<JSONValue?, R>) :
         AbstractIntObjectCoPipeline<JSONValue?, R>(valueConsumer) {
 
