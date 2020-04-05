@@ -1,3 +1,28 @@
+/*
+ * @(#) JSONCoStringBuilder.kt
+ *
+ * json-co-stream Kotlin coroutine JSON Streams
+ * Copyright (c) 2020 Peter Wall
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+
 package net.pwall.json.stream
 
 import net.pwall.json.JSONException
@@ -21,11 +46,11 @@ class JSONCoStringBuilder : JSONCoBuilder {
         when (state) {
             State.NORMAL -> acceptNormal(ch)
             State.BACKSLASH -> acceptBackslash(ch)
-            State.UNICODE1 -> acceptUnicode(ch.toChar(), State.UNICODE2)
-            State.UNICODE2 -> acceptUnicode(ch.toChar(), State.UNICODE3)
-            State.UNICODE3 -> acceptUnicode(ch.toChar(), State.UNICODE4)
+            State.UNICODE1 -> acceptUnicode(ch, State.UNICODE2)
+            State.UNICODE2 -> acceptUnicode(ch, State.UNICODE3)
+            State.UNICODE3 -> acceptUnicode(ch, State.UNICODE4)
             State.UNICODE4 -> {
-                acceptUnicode(ch.toChar(), State.NORMAL)
+                acceptUnicode(ch, State.NORMAL)
                 store(unicode.toChar())
             }
             State.COMPLETE -> JSONCoBuilder.checkWhitespace(ch)
@@ -35,8 +60,8 @@ class JSONCoStringBuilder : JSONCoBuilder {
 
     private fun acceptNormal(ch: Int) {
         when {
-            ch == '"'.toInt() -> state = State.COMPLETE
-            ch == '\\'.toInt() -> state = State.BACKSLASH
+            ch == DOUBLE_QUOTE -> state = State.COMPLETE
+            ch == BACKSLASH -> state = State.BACKSLASH
             ch <= 0x1F -> throw JSONException("Illegal character in JSON string")
             Character.isBmpCodePoint(ch) -> sb.append(ch.toChar())
             else -> {
@@ -48,13 +73,13 @@ class JSONCoStringBuilder : JSONCoBuilder {
 
     private fun acceptBackslash(ch: Int) {
         when (ch) {
-            '"'.toInt(), '\\'.toInt(), '/'.toInt() -> store(ch.toChar())
-            'b'.toInt() -> store('\b')
-            'f'.toInt() -> store('\u000C')
-            'n'.toInt() -> store('\n')
-            'r'.toInt() -> store('\r')
-            't'.toInt() -> store('\t')
-            'u'.toInt() -> state = State.UNICODE1
+            DOUBLE_QUOTE, BACKSLASH, SLASH -> store(ch.toChar())
+            LETTER_b -> store('\b')
+            LETTER_f -> store('\u000C')
+            LETTER_n -> store('\n')
+            LETTER_r -> store('\r')
+            LETTER_t -> store('\t')
+            LETTER_u -> state = State.UNICODE1
             else -> throw JSONException("Illegal escape sequence in JSON string")
         }
     }
@@ -64,15 +89,32 @@ class JSONCoStringBuilder : JSONCoBuilder {
         state = State.NORMAL
     }
 
-    private fun acceptUnicode(ch: Char, nextState: State) {
+    private fun acceptUnicode(ch: Int, nextState: State) {
         val digit = when (ch) {
-            in '0'..'9' -> ch.toInt() - '0'.toInt()
-            in 'A'..'F' -> ch.toInt() - 'A'.toInt() + 10
-            in 'a'..'f' -> ch.toInt() - 'a'.toInt() + 10
+            in DIGIT_0..DIGIT_9 -> ch - DIGIT_0
+            in LETTER_A..LETTER_F -> ch - LETTER_A + 10
+            in LETTER_a..LETTER_f -> ch - LETTER_a + 10
             else -> throw JSONException("Illegal Unicode sequence in JSON string")
         }
         unicode = (unicode shl 4) or digit
         state = nextState
+    }
+
+    companion object {
+        const val DIGIT_0 = '0'.toInt()
+        const val DIGIT_9 = '9'.toInt()
+        const val LETTER_A = 'A'.toInt()
+        const val LETTER_F = 'F'.toInt()
+        const val LETTER_a = 'a'.toInt()
+        const val LETTER_b = 'b'.toInt()
+        const val LETTER_f = 'f'.toInt()
+        const val LETTER_n = 'n'.toInt()
+        const val LETTER_r = 'r'.toInt()
+        const val LETTER_t = 't'.toInt()
+        const val LETTER_u = 'u'.toInt()
+        const val DOUBLE_QUOTE = '"'.toInt()
+        const val BACKSLASH = '\\'.toInt()
+        const val SLASH = '/'.toInt()
     }
 
 }
