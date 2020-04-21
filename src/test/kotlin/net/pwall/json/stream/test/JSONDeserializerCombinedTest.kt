@@ -31,24 +31,33 @@ import kotlin.test.expect
 
 import kotlinx.coroutines.runBlocking
 
+import net.pwall.json.Dummy1
 import net.pwall.json.stream.JSONArrayCoPipeline
 import net.pwall.json.stream.JSONDeserializerCoPipeline
 
 class JSONDeserializerCombinedTest {
 
-    @Test fun `should parse and deserialize in one pipeline`() {
-        runBlocking {
-            val pipeline = JSONArrayCoPipeline(JSONDeserializerCoPipeline.create(ListCoAcceptor<Int>()))
-            pipeline.accept("[1,3,5,7,9]")
-            assertTrue(pipeline.complete)
-            val list = pipeline.result
-            expect(5) { list.size }
-            expect(1) { list[0] }
-            expect(3) { list[1] }
-            expect(5) { list[2] }
-            expect(7) { list[3] }
-            expect(9) { list[4] }
-         }
-    }
+    @Test fun `should parse and deserialize in one pipeline`() = runBlocking {
+        val pipeline = JSONArrayCoPipeline(JSONDeserializerCoPipeline.create(ListCoAcceptor<Int>()))
+        pipeline.accept("[1,3,5,7,9]")
+        assertTrue(pipeline.complete)
+        val list = pipeline.result
+        expect(5) { list.size }
+        expect(1) { list[0] }
+        expect(3) { list[1] }
+        expect(5) { list[2] }
+        expect(7) { list[3] }
+        expect(9) { list[4] }
+     }
+
+    @Test fun `should parse and deserialize objects in one pipeline`() = runBlocking {
+        val pipeline = JSONArrayCoPipeline(JSONDeserializerCoPipeline.create(ListCoAcceptor<Dummy1>()))
+        pipeline.accept("""[{"field1":"abcdef","field2":543},{"field1":"xyz","field2":-1}]""")
+        assertTrue(pipeline.complete)
+        val list = pipeline.result
+        expect(2) { list.size }
+        expect(Dummy1("abcdef", 543)) { list[0] }
+        expect(Dummy1("xyz", -1)) { list[1] }
+     }
 
 }

@@ -5,7 +5,7 @@
 
   <groupId>net.pwall.json</groupId>
   <artifactId>json-co-stream</artifactId>
-  <version>0.2</version>
+  <version>0.2.1</version>
   <name>Kotlin coroutine JSON Streams</name>
   <description>Kotlin coroutine version of json-stream</description>
   <packaging>jar</packaging>
@@ -13,7 +13,7 @@
   <parent>
     <groupId>net.pwall.maven</groupId>
     <artifactId>maven-kotlin</artifactId>
-    <version>1.0</version>
+    <version>1.2</version>
   </parent>
 
   <properties>
@@ -72,12 +72,12 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin</artifactId>
-      <version>3.1</version>
+      <version>3.4.1</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.util</groupId>
       <artifactId>co-pipelines</artifactId>
-      <version>0.2</version>
+      <version>0.4.1</version>
     </dependency>
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
@@ -98,7 +98,7 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin-test-classes</artifactId>
-      <version>0.2</version>
+      <version>1.1.1</version>
       <scope>test</scope>
     </dependency>
   </dependencies>

@@ -2,6 +2,11 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.2.1] - 2020-04-22
+### Changed
+- `pom.xml`: updated dependency versions
+- Tests: reorganised 
+
 ## [0.2] - 2020-04-06
 ### Added
 - `JSONDeserializerCoPipeline`: deserialize 

@@ -37,51 +37,45 @@ import net.pwall.json.stream.JSONDeserializerCoPipeline
 
 class JSONDeserializerCoPipelineTest {
 
-    @Test fun `should deserialize strings`() {
-        runBlocking {
-            val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<String>())
-            pipeline.accept(JSONString("alpha"))
-            pipeline.accept(JSONString("beta"))
-            pipeline.accept(JSONString("gamma"))
-            pipeline.close()
-            val result = pipeline.result
-            expect(3) { result.size }
-            expect("alpha") { result[0] }
-            expect("beta") { result[1] }
-            expect("gamma") { result[2] }
-        }
+    @Test fun `should deserialize strings`() = runBlocking {
+        val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<String>())
+        pipeline.accept(JSONString("alpha"))
+        pipeline.accept(JSONString("beta"))
+        pipeline.accept(JSONString("gamma"))
+        pipeline.close()
+        val result = pipeline.result
+        expect(3) { result.size }
+        expect("alpha") { result[0] }
+        expect("beta") { result[1] }
+        expect("gamma") { result[2] }
     }
 
-    @Test fun `should deserialize integers`() {
-        runBlocking {
-            val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<Int>())
-            pipeline.accept(JSONInt(123))
-            pipeline.accept(JSONInt(456))
-            pipeline.close()
-            val result = pipeline.result
-            expect(2) { result.size }
-            expect(123) { result[0] }
-            expect(456) { result[1] }
-        }
+    @Test fun `should deserialize integers`() = runBlocking {
+        val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<Int>())
+        pipeline.accept(JSONInt(123))
+        pipeline.accept(JSONInt(456))
+        pipeline.close()
+        val result = pipeline.result
+        expect(2) { result.size }
+        expect(123) { result[0] }
+        expect(456) { result[1] }
     }
 
-    @Test fun `should deserialize objects`() {
-        runBlocking {
-            val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<Dummy1>())
-            pipeline.accept(JSONObject().apply {
-                putValue("field1", "abcdef")
-                putValue("field2", 123)
-            })
-            pipeline.accept(JSONObject().apply {
-                putValue("field1", "ghijkl")
-                putValue("field2", 456)
-            })
-            pipeline.close()
-            val result = pipeline.result
-            expect(2) { result.size }
-            expect(Dummy1("abcdef", 123)) { result[0] }
-            expect(Dummy1("ghijkl", 456)) { result[1] }
-        }
+    @Test fun `should deserialize objects`() = runBlocking {
+        val pipeline = JSONDeserializerCoPipeline.create(ListCoAcceptor<Dummy1>())
+        pipeline.accept(JSONObject().apply {
+            putValue("field1", "abcdef")
+            putValue("field2", 123)
+        })
+        pipeline.accept(JSONObject().apply {
+            putValue("field1", "ghijkl")
+            putValue("field2", 456)
+        })
+        pipeline.close()
+        val result = pipeline.result
+        expect(2) { result.size }
+        expect(Dummy1("abcdef", 123)) { result[0] }
+        expect(Dummy1("ghijkl", 456)) { result[1] }
     }
 
 }

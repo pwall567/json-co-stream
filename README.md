@@ -6,25 +6,25 @@ Includes `JSONDeserializerCoPipeline`, a pipeline that accepts `JSONValue`s and 
 
 ## Dependency Specification
 
-The latest version of the library is 0.2, and it may be obtained from the Maven Central repository.
+The latest version of the library is 0.2.1, and it may be obtained from the Maven Central repository.
 
 ### Maven
 ```xml
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-co-stream</artifactId>
-      <version>0.2</version>
+      <version>0.2.1</version>
     </dependency>
 ```
 ### Gradle
 ```groovy
-    implementation 'net.pwall.json:json-co-stream:0.2'
+    implementation 'net.pwall.json:json-co-stream:0.2.1'
 ```
 ### Gradle (kts)
 ```kotlin
-    implementation("net.pwall.json:json-co-stream:0.2")
+    implementation("net.pwall.json:json-co-stream:0.2.1")
 ```
 
 Peter Wall
 
-2020-04-06
+2020-04-22
