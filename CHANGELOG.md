@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.3] - 2020-05-03
+### Added
+- `JSONArrayProcessor`: combined code from `JSONArrayCoPipeline` and `JSONCoArrayBuilder`
+### Changed
+- `JSONArrayCoPipeline`: modified to use `JSONArrayProcessor`
+- `JSONCoArrayBuilder`: modified to use `JSONArrayProcessor`
+
 ## [0.2.1] - 2020-04-22
 ### Changed
 - `pom.xml`: updated dependency versions
