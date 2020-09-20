@@ -25,6 +25,9 @@
 
 package net.pwall.json.stream
 
+import net.pwall.json.JSONConfig
+import kotlin.reflect.KType
+
 import net.pwall.json.JSONException
 import net.pwall.json.JSONValue
 import net.pwall.util.pipeline.AbstractIntObjectCoPipeline
@@ -39,11 +42,11 @@ import net.pwall.util.pipeline.CoAcceptor
  * @param   R               the pipeline result type
  * @author  Peter Wall
  */
-class JSONArrayCoPipeline<R>(valueConsumer: CoAcceptor<JSONValue?, R>) :
-        AbstractIntObjectCoPipeline<JSONValue?, R>(valueConsumer) {
+class JSONArrayCoPipeline<R>(targetType: KType, valueConsumer: CoAcceptor<JSONValue?, R>,
+        config: JSONConfig = JSONConfig.defaultConfig) : AbstractIntObjectCoPipeline<JSONValue?, R>(valueConsumer) {
 
-    private val arrayProcessor = JSONArrayProcessor {
-        emit(it)
+    private val arrayProcessor = JSONArrayCoProcessor("", targetType, config) {
+        emit(it.jsonValue)
     }
 
     override val complete: Boolean

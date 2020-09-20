@@ -31,7 +31,8 @@ import net.pwall.json.JSONValue
 interface JSONCoBuilder {
 
     val complete: Boolean
-    val result: JSONValue?
+    val rawValue: Any?
+    val jsonValue: JSONValue?
 
     suspend fun acceptChar(ch: Int): Boolean
 

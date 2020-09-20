@@ -25,22 +25,95 @@
 
 package net.pwall.json.stream
 
+import kotlin.reflect.KClass
+import kotlin.reflect.KType
+import kotlin.reflect.full.isSubclassOf
+import kotlin.reflect.full.isSuperclassOf
+import kotlin.reflect.full.staticFunctions
+
+import java.time.Duration
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalDateTime
+import java.time.LocalTime
+import java.time.MonthDay
+import java.time.OffsetDateTime
+import java.time.OffsetTime
+import java.time.Period
+import java.time.Year
+import java.time.YearMonth
+import java.time.ZonedDateTime
+import java.util.Calendar
+import java.util.Date
+import java.util.UUID
+
 import net.pwall.json.JSONException
 import net.pwall.json.JSONString
+import net.pwall.json.JSONDeserializerFunctions.hasSingleParameter
+import net.pwall.util.ISO8601Date
 
-class JSONCoStringBuilder : JSONCoBuilder {
+class JSONCoStringBuilder(private val path: String, private val targetType: KType) : JSONCoBuilder {
+
+    private val targetClass =
+            targetType.classifier as? KClass<*> ?: throw JSONException("$path: Can't deserialize $targetType")
 
     enum class State { NORMAL, BACKSLASH, UNICODE1, UNICODE2, UNICODE3, UNICODE4, COMPLETE }
 
     private val sb = StringBuilder()
+    private val str: String
+        get() = sb.toString()
     private var state: State = State.NORMAL
     private var unicode = 0
 
     override val complete: Boolean
         get() = state == State.COMPLETE
 
-    override val result: JSONString
-        get() = if (complete) JSONString(sb) else throw JSONException("Unterminated JSON string")
+    override val rawValue: Any?
+        get() {
+            if (!complete)
+                throw JSONException("$path: Unterminated JSON string")
+            if (targetClass.isSuperclassOf(String::class))
+                return str
+            if (targetClass == Char::class && sb.length == 1)
+                return sb[0]
+            try {
+                when (targetClass) {
+                    CharArray::class -> return str.toCharArray()
+                    Array<Char>::class -> return Array(sb.length) { i -> sb[i] }
+                    java.sql.Date::class -> return java.sql.Date.valueOf(str)
+                    java.sql.Time::class -> return java.sql.Time.valueOf(str)
+                    java.sql.Timestamp::class -> return java.sql.Timestamp.valueOf(str)
+                    Calendar::class -> return ISO8601Date.decode(str)
+                    Date::class -> return ISO8601Date.decode(str).time
+                    Instant::class -> return Instant.parse(str)
+                    LocalDate::class -> return LocalDate.parse(str)
+                    LocalDateTime::class -> return LocalDateTime.parse(str)
+                    LocalTime::class -> return LocalTime.parse(str)
+                    OffsetTime::class -> return OffsetTime.parse(str)
+                    OffsetDateTime::class -> return OffsetDateTime.parse(str)
+                    ZonedDateTime::class -> return ZonedDateTime.parse(str)
+                    Year::class -> return Year.parse(str)
+                    YearMonth::class -> return YearMonth.parse(str)
+                    MonthDay::class -> return MonthDay.parse(str)
+                    Duration::class -> return Duration.parse(str)
+                    Period::class -> return Period.parse(str)
+                    UUID::class -> return UUID.fromString(str)
+                }
+            }
+            catch (e: JSONException) {
+                throw e
+            }
+            catch (e: Exception) {
+                throw JSONException("$path: Can't deserialize \"$sb\" as $targetType", e)
+            }
+            if (targetClass.isSubclassOf(Enum::class))
+                targetClass.staticFunctions.find { it.name == "valueOf" }?.let { return it.call(str) }
+            targetClass.constructors.find { it.hasSingleParameter(String::class) }?.apply { return call(str) }
+            throw JSONException("$path: Can't deserialize \"$sb\" as $targetType")
+        }
+
+    override val jsonValue: JSONString
+        get() = if (complete) JSONString(sb) else throw JSONException("$path: Unterminated JSON string")
 
     override suspend fun acceptChar(ch: Int): Boolean {
         when (state) {
@@ -118,3 +191,4 @@ class JSONCoStringBuilder : JSONCoBuilder {
     }
 
 }
+

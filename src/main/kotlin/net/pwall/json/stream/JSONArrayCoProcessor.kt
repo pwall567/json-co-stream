@@ -25,15 +25,18 @@
 
 package net.pwall.json.stream
 
-import net.pwall.json.JSONException
-import net.pwall.json.JSONValue
+import kotlin.reflect.KType
 
-class JSONArrayProcessor(openingBracketSeen: Boolean = false, val consume: suspend (JSONValue?) -> Unit) {
+import net.pwall.json.JSONConfig
+import net.pwall.json.JSONException
+
+class JSONArrayCoProcessor(private val path: String, private val targetType: KType, private val config: JSONConfig,
+        openingBracketSeen: Boolean = false, val consume: suspend (JSONCoValueBuilder) -> Unit) {
 
     enum class State { INITIAL, FIRST, ENTRY, COMMA, COMPLETE }
 
     private var state: State = if (openingBracketSeen) State.FIRST else State.INITIAL
-    private var child: JSONCoValueBuilder = JSONCoValueBuilder()
+    private var child: JSONCoValueBuilder = JSONCoValueBuilder(path, targetType, config)
 
     val complete: Boolean
         get() = state == State.COMPLETE
@@ -62,7 +65,7 @@ class JSONArrayProcessor(openingBracketSeen: Boolean = false, val consume: suspe
             State.ENTRY -> {
                 val consumed = child.acceptChar(ch)
                 if (child.complete) {
-                    consume(child.result)
+                    consume(child)
                     state = State.COMMA
                 }
                 if (!consumed) {
@@ -79,7 +82,7 @@ class JSONArrayProcessor(openingBracketSeen: Boolean = false, val consume: suspe
         if (!JSONCoBuilder.isWhitespace(ch)) {
             state = when (ch) {
                 COMMA -> {
-                    child = JSONCoValueBuilder()
+                    child = JSONCoValueBuilder(path, targetType, config)
                     State.ENTRY
                 }
                 CLOSING_BRACKET -> State.COMPLETE

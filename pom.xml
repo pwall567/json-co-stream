@@ -5,7 +5,7 @@
 
   <groupId>net.pwall.json</groupId>
   <artifactId>json-co-stream</artifactId>
-  <version>0.3</version>
+  <version>0.4-SNAPSHOT</version>
   <name>Kotlin coroutine JSON Streams</name>
   <description>Kotlin coroutine version of json-stream</description>
   <packaging>jar</packaging>
@@ -62,12 +62,12 @@
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>jsonutil</artifactId>
-      <version>3.0</version>
+      <version>3.1</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.json</groupId>
       <artifactId>json-kotlin</artifactId>
-      <version>3.6</version>
+      <version>3.10</version>
     </dependency>
     <dependency>
       <groupId>net.pwall.util</groupId>

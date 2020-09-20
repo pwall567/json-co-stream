@@ -25,14 +25,20 @@
 
 package net.pwall.json.stream
 
+import kotlin.reflect.KType
+
 import net.pwall.json.JSONDecimal
 import net.pwall.json.JSONException
 import net.pwall.json.JSONInteger
 import net.pwall.json.JSONLong
 import net.pwall.json.JSONValue
 import net.pwall.json.JSONZero
+import java.math.BigDecimal
+import java.math.BigInteger
+import kotlin.reflect.full.isSupertypeOf
+import kotlin.reflect.full.starProjectedType
 
-class JSONCoNumberBuilder(initialChar: Char) : JSONCoBuilder {
+class JSONCoNumberBuilder(private val path: String, private val targetType: KType, initialChar: Char) : JSONCoBuilder {
 
     enum class State { MINUS_SEEN, ZERO_SEEN, INTEGER, DOT_SEEN, FRACTION, E_SEEN, E_SIGN_SEEN, EXPONENT, COMPLETE }
 
@@ -52,7 +58,37 @@ class JSONCoNumberBuilder(initialChar: Char) : JSONCoBuilder {
     override val complete: Boolean
         get() = state == State.COMPLETE
 
-    override val result: JSONValue
+    override val rawValue: Any
+        get() {
+            if (!complete)
+                throw JSONException("$path: Keyword not complete")
+            return if (floating) {
+                when {
+                    targetType == bigDecimalType -> bigDecimal()
+                    targetType == bigIntegerType -> bigInteger()
+                    targetType == doubleType -> number.toString().toDouble()
+                    targetType == floatType -> number.toString().toFloat()
+                    targetType.isSupertypeOf(numberType) -> bigDecimal()
+                    else -> throw JSONException("$path: Can't deserialize $number as $targetType")
+                }
+            }
+            else {
+                when {
+                    targetType == intType -> int()
+                    targetType == longType -> number.toString().toLong()
+                    targetType == shortType -> number.toString().toShort()
+                    targetType == byteType -> number.toString().toByte()
+                    targetType == bigDecimalType -> bigDecimal()
+                    targetType == bigIntegerType -> bigInteger()
+                    targetType == doubleType -> number.toString().toDouble()
+                    targetType == floatType -> number.toString().toFloat()
+                    targetType.isSupertypeOf(numberType) -> number.toString().toLong()
+                    else -> throw JSONException("$path: Can't deserialize $number as $targetType")
+                }
+            }
+        }
+
+    override val jsonValue: JSONValue
         get() = when {
             !complete -> throw JSONException("Number not complete")
             number.length == 1 && number[0] == '0' -> JSONZero.ZERO
@@ -137,6 +173,44 @@ class JSONCoNumberBuilder(initialChar: Char) : JSONCoBuilder {
 
     private fun store(ch: Char) {
         number.append(ch)
+    }
+
+    private fun bigDecimal() = number.toString().let {
+        when (it) {
+            "0" -> BigDecimal.ZERO
+            "1" -> BigDecimal.ONE
+            "10" -> BigDecimal.TEN
+            else -> BigDecimal(it)
+        }
+    }
+
+    private fun bigInteger() = number.toString().let {
+        when (it) {
+            "0" -> BigInteger.ZERO
+            "1" -> BigInteger.ONE
+            "10" -> BigInteger.TEN
+            else -> BigInteger(it)
+        }
+    }
+
+    private fun int() = number.toString().let {
+        when (it) {
+            "0" -> 0
+            "1" -> 1
+            else -> it.toInt()
+        }
+    }
+
+    companion object {
+        val bigDecimalType = BigDecimal::class.starProjectedType
+        val bigIntegerType = BigInteger::class.starProjectedType
+        val numberType = Number::class.starProjectedType
+        val doubleType = Double::class.starProjectedType
+        val floatType = Float::class.starProjectedType
+        val intType = Int::class.starProjectedType
+        val longType = Long::class.starProjectedType
+        val shortType = Short::class.starProjectedType
+        val byteType = Byte::class.starProjectedType
     }
 
 }

@@ -25,16 +25,19 @@
 
 package net.pwall.json.stream
 
+import net.pwall.json.JSONConfig
 import net.pwall.json.JSONValue
 import net.pwall.util.pipeline.AbstractIntCoAcceptor
+import kotlin.reflect.KType
 
-class JSONCoStream : AbstractIntCoAcceptor<JSONValue?>() {
+class JSONCoStream(targetType: KType = JSONCoValueBuilder.anyQType, config: JSONConfig = JSONConfig.defaultConfig) :
+        AbstractIntCoAcceptor<JSONValue?>() {
 
-    private val delegate = JSONCoValueBuilder()
+    private val delegate = JSONCoValueBuilder("", targetType, config)
     private var started = false
 
     override val result: JSONValue?
-        get() = delegate.result
+        get() = delegate.jsonValue
 
     override suspend fun acceptInt(value: Int) {
         if (!started) {

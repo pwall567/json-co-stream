@@ -25,33 +25,45 @@
 
 package net.pwall.json.stream
 
+import kotlin.reflect.KType
+
 import net.pwall.json.JSONBoolean
+import net.pwall.json.JSONConfig
 import net.pwall.json.JSONException
 import net.pwall.json.JSONValue
+import kotlin.reflect.full.createType
 
-class JSONCoValueBuilder : JSONCoBuilder {
+class JSONCoValueBuilder(private val path: String, private val targetType: KType, private val config: JSONConfig) :
+        JSONCoBuilder {
 
     private var delegate: JSONCoBuilder? = null
 
     override val complete: Boolean
         get() = delegate?.complete ?: false
 
-    override val result: JSONValue?
-        get() = delegate.let { if (it != null && it.complete) it.result else throw JSONException("JSON not complete") }
+    override val rawValue: Any?
+        get() = delegate.let {
+            if (it != null && it.complete) it.rawValue else throw JSONException("$path: JSON not complete")
+        }
+
+    override val jsonValue: JSONValue?
+        get() = delegate.let {
+            if (it != null && it.complete) it.jsonValue else throw JSONException("$path: JSON not complete")
+        }
 
     override suspend fun acceptChar(ch: Int): Boolean {
         delegate.let {
             if (it == null) {
                 if (!JSONCoBuilder.isWhitespace(ch)) {
                     delegate = when (ch.toChar()) {
-                        '{' -> JSONCoObjectBuilder()
-                        '[' -> JSONCoArrayBuilder()
-                        '"' -> JSONCoStringBuilder()
-                        '-', in '0'..'9' -> JSONCoNumberBuilder(ch.toChar())
-                        't' -> JSONCoKeywordBuilder("true", JSONBoolean.TRUE)
-                        'f' -> JSONCoKeywordBuilder("false", JSONBoolean.FALSE)
-                        'n' -> JSONCoKeywordBuilder("null", null)
-                        else -> throw JSONException("Illegal syntax in JSON")
+                        '{' -> JSONCoObjectBuilder(path, targetType, config)
+                        '[' -> arrayBuilder()
+                        '"' -> JSONCoStringBuilder(path, targetType)
+                        '-', in '0'..'9' -> JSONCoNumberBuilder(path, targetType, ch.toChar())
+                        't' -> JSONCoKeywordBuilder(path, targetType, "true", true, JSONBoolean.TRUE)
+                        'f' -> JSONCoKeywordBuilder(path, targetType, "false", false, JSONBoolean.FALSE)
+                        'n' -> JSONCoKeywordBuilder(path, targetType, "null", null, null)
+                        else -> throw JSONException("$path: Illegal syntax in JSON")
                     }
                 }
                 return true
@@ -71,8 +83,18 @@ class JSONCoValueBuilder : JSONCoBuilder {
                     it.close()
             }
             else
-                throw JSONException("JSON value not complete")
+                throw JSONException("$path: JSON value not complete")
         }
+    }
+
+    private fun arrayBuilder(): JSONCoArrayBuilder {
+        // TODO different types of array - List, Channel, Flow...
+        val arrayType = targetType.arguments.firstOrNull()?.type ?: anyQType
+        return JSONCoArrayBuilder(path, arrayType, config)
+    }
+
+    companion object {
+        internal val anyQType = Any::class.createType(emptyList(), true)
     }
 
 }

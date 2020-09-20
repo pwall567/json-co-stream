@@ -25,22 +25,28 @@
 
 package net.pwall.json.stream
 
+import kotlin.reflect.KType
+
 import net.pwall.json.JSONArray
+import net.pwall.json.JSONConfig
 import net.pwall.json.JSONException
-import net.pwall.json.JSONValue
 
-class JSONCoArrayBuilder : JSONCoBuilder {
+class JSONCoArrayBuilder(private val path: String, targetType: KType, config: JSONConfig) : JSONCoBuilder {
 
-    private val entries = ArrayList<JSONValue?>()
-    private val arrayProcessor = JSONArrayProcessor(true) {
-        entries.add(it)
+    private val results = ArrayList<JSONCoValueBuilder>()
+    private val arrayProcessor = JSONArrayCoProcessor(path, targetType, config, true) {
+        results.add(it)
     }
 
     override val complete: Boolean
         get() = arrayProcessor.complete
 
-    override val result: JSONArray
-        get() = if (complete) JSONArray(entries) else throw JSONException("Array not complete")
+    override val rawValue: Any?
+        get() = if (complete) results.map { it.rawValue } else throw JSONException("$path: Array not complete")
+
+    override val jsonValue: JSONArray
+        get() = if (complete) JSONArray(results.map { it.jsonValue })
+                else throw JSONException("$path: Array not complete")
 
     override suspend fun acceptChar(ch: Int): Boolean {
         arrayProcessor.acceptInt(ch)
