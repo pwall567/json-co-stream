@@ -2,6 +2,13 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [Unreleased]
+The branch very much a work in progress - main development continuing in master
+
+## [0.4] - 2020-09-20
+### Changed
+- `pom.xml`: updated Kotlin version to 1.4.0
+
 ## [0.3] - 2020-05-03
 ### Added
 - `JSONArrayProcessor`: combined code from `JSONArrayCoPipeline` and `JSONCoArrayBuilder`
