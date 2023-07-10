@@ -25,7 +25,7 @@
 
 package net.pwall.json.stream.test
 
-import net.pwall.util.pipeline.AbstractCoAcceptor
+import net.pwall.pipeline.AbstractCoAcceptor
 
 class ListCoAcceptor<A> : AbstractCoAcceptor<A, List<A>>() {
 

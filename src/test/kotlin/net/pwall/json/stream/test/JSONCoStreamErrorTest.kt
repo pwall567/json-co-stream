@@ -33,6 +33,7 @@ import kotlinx.coroutines.runBlocking
 
 import net.pwall.json.JSONException
 import net.pwall.json.stream.JSONCoStream
+import net.pwall.pipeline.accept
 
 class JSONCoStreamErrorTest {
 
@@ -48,6 +49,7 @@ class JSONCoStreamErrorTest {
         val exception = assertFailsWith<JSONException> {
             val stream = JSONCoStream()
             stream.accept("[")
+            stream.close()
         }
         assertEquals("Unexpected end of data", exception.message)
     }

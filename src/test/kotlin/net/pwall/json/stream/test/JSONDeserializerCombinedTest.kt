@@ -34,6 +34,7 @@ import kotlinx.coroutines.runBlocking
 import net.pwall.json.Dummy1
 import net.pwall.json.stream.JSONArrayCoPipeline
 import net.pwall.json.stream.JSONDeserializerCoPipeline
+import net.pwall.pipeline.accept
 
 class JSONDeserializerCombinedTest {
 

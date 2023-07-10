@@ -39,7 +39,8 @@ import net.pwall.json.JSONString
 import net.pwall.json.JSONValue
 import net.pwall.json.JSONZero
 import net.pwall.json.stream.JSONArrayCoPipeline
-import net.pwall.util.pipeline.AbstractCoAcceptor
+import net.pwall.pipeline.AbstractCoAcceptor
+import net.pwall.pipeline.accept
 
 class JSONArrayCoPipelineTest {
 

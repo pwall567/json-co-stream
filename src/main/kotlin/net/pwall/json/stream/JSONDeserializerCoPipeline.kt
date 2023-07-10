@@ -31,8 +31,8 @@ import net.pwall.json.JSONConfig
 import net.pwall.json.JSONDeserializer
 import net.pwall.json.JSONTypeRef
 import net.pwall.json.JSONValue
-import net.pwall.util.pipeline.AbstractCoPipeline
-import net.pwall.util.pipeline.CoAcceptor
+import net.pwall.pipeline.AbstractCoPipeline
+import net.pwall.pipeline.CoAcceptor
 
 /**
  * A pipeline that takes a [JSONValue] and emits the deserialized value.

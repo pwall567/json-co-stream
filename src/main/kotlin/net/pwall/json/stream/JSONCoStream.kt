@@ -26,7 +26,7 @@
 package net.pwall.json.stream
 
 import net.pwall.json.JSONValue
-import net.pwall.util.pipeline.AbstractIntCoAcceptor
+import net.pwall.pipeline.AbstractIntCoAcceptor
 
 class JSONCoStream : AbstractIntCoAcceptor<JSONValue?>() {
 
@@ -48,7 +48,7 @@ class JSONCoStream : AbstractIntCoAcceptor<JSONValue?>() {
         }
     }
 
-    override fun close() {
+    override suspend fun close() {
         delegate.close()
     }
 

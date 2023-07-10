@@ -27,8 +27,8 @@ package net.pwall.json.stream
 
 import net.pwall.json.JSONException
 import net.pwall.json.JSONValue
-import net.pwall.util.pipeline.AbstractIntObjectCoPipeline
-import net.pwall.util.pipeline.CoAcceptor
+import net.pwall.pipeline.AbstractIntObjectCoPipeline
+import net.pwall.pipeline.CoAcceptor
 
 /**
  * A (coroutine) pipeline that accepts a JSON array as a stream of Unicode code points and emits a `JSONValue` for each
@@ -53,7 +53,7 @@ class JSONArrayCoPipeline<R>(valueConsumer: CoAcceptor<JSONValue?, R>) :
         arrayProcessor.acceptInt(value)
     }
 
-    override fun close() {
+    override suspend fun close() {
         if (!complete)
             throw JSONException("Unexpected end of data in JSON array")
     }
