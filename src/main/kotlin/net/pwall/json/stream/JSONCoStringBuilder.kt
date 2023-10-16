@@ -2,7 +2,7 @@
  * @(#) JSONCoStringBuilder.kt
  *
  * json-co-stream Kotlin coroutine JSON Streams
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -101,20 +101,20 @@ class JSONCoStringBuilder : JSONCoBuilder {
     }
 
     companion object {
-        const val DIGIT_0 = '0'.toInt()
-        const val DIGIT_9 = '9'.toInt()
-        const val LETTER_A = 'A'.toInt()
-        const val LETTER_F = 'F'.toInt()
-        const val LETTER_a = 'a'.toInt()
-        const val LETTER_b = 'b'.toInt()
-        const val LETTER_f = 'f'.toInt()
-        const val LETTER_n = 'n'.toInt()
-        const val LETTER_r = 'r'.toInt()
-        const val LETTER_t = 't'.toInt()
-        const val LETTER_u = 'u'.toInt()
-        const val DOUBLE_QUOTE = '"'.toInt()
-        const val BACKSLASH = '\\'.toInt()
-        const val SLASH = '/'.toInt()
+        const val DIGIT_0 = '0'.code
+        const val DIGIT_9 = '9'.code
+        const val LETTER_A = 'A'.code
+        const val LETTER_F = 'F'.code
+        const val LETTER_a = 'a'.code
+        const val LETTER_b = 'b'.code
+        const val LETTER_f = 'f'.code
+        const val LETTER_n = 'n'.code
+        const val LETTER_r = 'r'.code
+        const val LETTER_t = 't'.code
+        const val LETTER_u = 'u'.code
+        const val DOUBLE_QUOTE = '"'.code
+        const val BACKSLASH = '\\'.code
+        const val SLASH = '/'.code
     }
 
 }

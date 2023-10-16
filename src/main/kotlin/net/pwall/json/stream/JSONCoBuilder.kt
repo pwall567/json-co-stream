@@ -2,7 +2,7 @@
  * @(#) JSONCoBuilder.kt
  *
  * json-co-stream Kotlin coroutine JSON Streams
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -41,7 +41,7 @@ interface JSONCoBuilder {
     }
 
     companion object {
-        fun isWhitespace(ch: Int) = ch == ' '.toInt() || ch == '\t'.toInt() || ch == '\n'.toInt() || ch == '\r'.toInt()
+        fun isWhitespace(ch: Int) = ch == ' '.code || ch == '\t'.code || ch == '\n'.code || ch == '\r'.code
         fun checkWhitespace(ch: Int) {
             if (!isWhitespace(ch))
                 throw JSONException("Unexpected characters at end of JSON")

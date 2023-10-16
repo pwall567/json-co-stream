@@ -2,7 +2,7 @@
  * @(#) JSONCoObjectBuilder.kt
  *
  * json-co-stream Kotlin coroutine JSON Streams
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -49,8 +49,8 @@ class JSONCoObjectBuilder : JSONCoBuilder {
             State.INITIAL -> {
                 if (!JSONCoBuilder.isWhitespace(ch)) {
                     state = when (ch) {
-                        '}'.toInt() -> State.COMPLETE
-                        '"'.toInt() -> State.NAME
+                        '}'.code -> State.COMPLETE
+                        '"'.code -> State.NAME
                         else -> throw JSONException("Illegal syntax in JSON object")
                     }
                 }
@@ -66,7 +66,7 @@ class JSONCoObjectBuilder : JSONCoBuilder {
             }
             State.COLON -> {
                 if (!JSONCoBuilder.isWhitespace(ch)) {
-                    if (ch == ':'.toInt()) {
+                    if (ch == ':'.code) {
                         child = JSONCoValueBuilder()
                         state = State.VALUE
                     }
@@ -88,7 +88,7 @@ class JSONCoObjectBuilder : JSONCoBuilder {
             State.COMMA -> expectComma(ch)
             State.NEXT -> {
                 if (!JSONCoBuilder.isWhitespace(ch)) {
-                    if (ch == '"'.toInt()) {
+                    if (ch == '"'.code) {
                         child = JSONCoStringBuilder()
                         state = State.NAME
                     }
@@ -104,8 +104,8 @@ class JSONCoObjectBuilder : JSONCoBuilder {
     private fun expectComma(ch: Int) {
         if (!JSONCoBuilder.isWhitespace(ch)) {
             state = when (ch) {
-                ','.toInt() -> State.NEXT
-                '}'.toInt() -> State.COMPLETE
+                ','.code -> State.NEXT
+                '}'.code -> State.COMPLETE
                 else -> throw JSONException("Illegal syntax in JSON object")
             }
         }

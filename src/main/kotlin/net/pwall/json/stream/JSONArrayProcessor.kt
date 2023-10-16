@@ -2,7 +2,7 @@
  * @(#) JSONArrayProcessor.kt
  *
  * json-co-stream Kotlin coroutine JSON Streams
- * Copyright (c) 2020 Peter Wall
+ * Copyright (c) 2020, 2023 Peter Wall
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -89,9 +89,9 @@ class JSONArrayProcessor(openingBracketSeen: Boolean = false, val consume: suspe
     }
 
     companion object {
-        const val OPENING_BRACKET = '['.toInt()
-        const val CLOSING_BRACKET = ']'.toInt()
-        const val COMMA = ','.toInt()
+        const val OPENING_BRACKET = '['.code
+        const val CLOSING_BRACKET = ']'.code
+        const val COMMA = ','.code
     }
 
 }

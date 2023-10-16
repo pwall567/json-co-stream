@@ -294,8 +294,8 @@ class JSONCoValueBuilderTest {
 
     @Test fun `should parse a string with an emoji`() = runBlocking {
         val stream = CoUTF8_CodePoint(JSONCoStream())
-        val json = byteArrayOf('"'.toByte(), 'a'.toByte(), 'a'.toByte(), 0xF0.toByte(), 0x9F.toByte(), 0x98.toByte(),
-                0x82.toByte(), 'b'.toByte(), 'b'.toByte(), '"'.toByte())
+        val json = byteArrayOf('"'.code.toByte(), 'a'.code.toByte(), 'a'.code.toByte(), 0xF0.toByte(), 0x9F.toByte(),
+                0x98.toByte(), 0x82.toByte(), 'b'.code.toByte(), 'b'.code.toByte(), '"'.code.toByte())
         stream.accept(json)
         stream.close()
         val result = stream.result
@@ -559,7 +559,7 @@ class JSONCoValueBuilderTest {
     @Test fun `should ignore byte order mark`() = runBlocking {
         // BOM is not allowed in JSON, but JSONCoStream ignores it anyway
         val stream = CoUTF8_CodePoint(JSONCoStream())
-        val json = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte(), '0'.toByte())
+        val json = byteArrayOf(0xEF.toByte(), 0xBB.toByte(), 0xBF.toByte(), '0'.code.toByte())
         stream.accept(json)
         stream.close()
         assertSame(JSONZero.ZERO, stream.result)

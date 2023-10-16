@@ -57,7 +57,7 @@ class JSONCoStreamErrorTest {
     @Test fun `should throw exception when getting result and JSON incomplete`() = runBlocking {
         val exception = assertFailsWith<JSONException> {
             val stream = JSONCoStream()
-            stream.accept('{'.toInt())
+            stream.accept('{'.code)
             stream.result
         }
         assertEquals("JSON not complete", exception.message)

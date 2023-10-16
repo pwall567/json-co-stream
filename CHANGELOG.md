@@ -2,6 +2,10 @@
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/).
 
+## [0.8.1] - 2023-10-17
+### Changed
+- `JSONArrayProcessor`, `JSONCoBuilder`, `JSONCoObjectBuilder`, `JSONCoStringBuilder`: fixed deprecations
+
 ## [0.8] - 2023-10-17
 ### Changed
 - `pom.xml`: updated dependency versions
